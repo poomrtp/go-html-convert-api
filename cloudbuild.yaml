@@ -1,0 +1,27 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      ['build', '-t', 'gcr.io/$PROJECT_ID/html-to-file-api:$COMMIT_SHA', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/html-to-file-api:$COMMIT_SHA']
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: [
+        'run',
+        'deploy',
+        'html-to-file-api',
+        '--image',
+        'gcr.io/$PROJECT_ID/html-to-file-api:$COMMIT_SHA',
+        '--platform',
+        'managed',
+        '--region',
+        'asia-southeast1', # เลือก region ที่ใกล้ที่สุด
+        '--allow-unauthenticated', # อนุญาตให้เรียกใช้โดยไม่ต้อง authenticate
+        '--memory',
+        '512Mi', # เพิ่ม memory ถ้าแปลงไฟล์ใหญ่ๆ
+        '--cpu',
+        '1',
+        '--timeout',
+        '60s', # ตั้งค่า timeout เพิ่มขึ้นสำหรับการแปลงที่ใช้เวลานาน
+      ]
+images:
+  - 'gcr.io/$PROJECT_ID/html-to-file-api:$COMMIT_SHA'
