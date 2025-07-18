@@ -97,13 +97,59 @@ docker build -t html-to-file-api .
 docker run -p 8080:8080 -e JWT_SECRET_KEY=your_secret_key html-to-file-api
 ```
 
-## Google Cloud Run Deployment
+## Google Cloud Platform (GCP) CI/CD
 
-This project includes a `cloudbuild.yaml` for CI/CD. Example deploy:
+This project is ready for automated deployment to Google Cloud Run using Google Cloud Build. The provided `cloudbuild.yaml` file defines the build and deployment steps.
+
+### Prerequisites
+
+- A Google Cloud project with billing enabled
+- Cloud Build and Cloud Run APIs enabled
+- Docker and gcloud CLI installed locally (for manual triggers)
+
+### Setup
+
+1. **Clone the repository and navigate to the project directory:**
+   ```bash
+   git clone https://github.com/yourusername/html-to-file-api.git
+   cd html-to-file-api
+   ```
+2. **Set your GCP project:**
+   ```bash
+   gcloud config set project YOUR_PROJECT_ID
+   ```
+3. **(Optional) Authenticate Docker to GCR:**
+   ```bash
+   gcloud auth configure-docker
+   ```
+
+### Automated Build & Deploy
+
+Cloud Build will:
+
+- Build the Docker image
+- Push it to Google Container Registry (GCR)
+- Deploy to Cloud Run
+
+To trigger a build and deploy (from the project root):
 
 ```bash
 gcloud builds submit --config cloudbuild.yaml
 ```
+
+The `cloudbuild.yaml` is configured to:
+
+- Build and tag the Docker image with the commit SHA
+- Push the image to GCR
+- Deploy to Cloud Run in the `asia-southeast1` region (edit as needed)
+- Set memory, CPU, and timeout for large file conversions
+- Allow unauthenticated access (can be changed for private APIs)
+
+#### Environment Variables in Cloud Run
+
+Set `JWT_SECRET_KEY` in the Cloud Run service configuration for production security.
+
+For more details, see [Cloud Build documentation](https://cloud.google.com/build/docs) and [Cloud Run documentation](https://cloud.google.com/run/docs).
 
 ## Environment Variables
 

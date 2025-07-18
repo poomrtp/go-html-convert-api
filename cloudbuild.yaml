@@ -24,9 +24,9 @@ steps:
         '--timeout',
         '90s',
         '--set-env-vars',
-        'JWT_SECRET=projects/${PROJECT_NUMBER}/secrets/my-jwt-secret:latest',
+        'JWT_SECRET=projects/${PROJECT_NUMBER}/secrets/JWT_SECRET_KEY',
         '--update-secrets',
-        'JWT_SECRET=projects/${PROJECT_NUMBER}/secrets/my-jwt-secret:latest',
+        'JWT_SECRET=projects/${PROJECT_NUMBER}/secrets/JWT_SECRET_KEY',
         '--set-env-vars',
         'ENVIRONMENT=production',
       ]
