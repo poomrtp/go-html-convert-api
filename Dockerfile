@@ -1,5 +1,5 @@
 # Use a base image with Go and necessary build tools
-FROM golang:1.22-bookworm AS builder
+FROM golang:1.23-alpine AS builder
 
 # Set working directory inside the container
 WORKDIR /app

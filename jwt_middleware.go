@@ -25,7 +25,6 @@ func InitJWTSecret() {
 		log.Printf("[ERROR] JWT_SECRET_KEY environment variable is not set")
 	}
 	JWT_SECRET_KEY = []byte(secret)
-	log.Printf("JWT_SECRET_KEY Type: %T, Value: %s\n", JWT_SECRET_KEY, JWT_SECRET_KEY)
 }
 
 // JWTAuthMiddleware is a custom Gin middleware to validate JWT tokens.
@@ -37,7 +36,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		log.Printf("authHeader: %s", authHeader)
+
 		parts := strings.SplitN(authHeader, " ", 2)
 		if !(len(parts) == 2 && strings.ToLower(parts[0]) == "bearer") {
 			c.JSON(401, gin.H{"error": "Invalid Authorization header format. Expected 'Bearer <token>'"})
@@ -45,8 +44,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 		tokenString := parts[1]
-		log.Printf("JWT_SECRET_KEY: %s", JWT_SECRET_KEY)
-		log.Printf("tokenString: %s", tokenString)
+
 		_, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
