@@ -1,9 +1,14 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
-      ['build', '-t', 'gcr.io/$PROJECT_ID/html-to-file-api:$COMMIT_SHA', '.']
+      [
+        'build',
+        '-t',
+        'gcr.io/${PROJECT_ID}/html-to-file-api:${COMMIT_SHA}',
+        '.',
+      ]
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/html-to-file-api:$COMMIT_SHA']
+    args: ['push', 'gcr.io/${PROJECT_ID}/html-to-file-api:${COMMIT_SHA}']
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
       [
@@ -11,7 +16,7 @@ steps:
         'deploy',
         'html-to-file-api',
         '--image',
-        'gcr.io/$PROJECT_ID/html-to-file-api:$COMMIT_SHA',
+        'gcr.io/${PROJECT_ID}/html-to-file-api:${COMMIT_SHA}',
         '--platform',
         'managed',
         '--region',
@@ -31,4 +36,4 @@ steps:
         'ENVIRONMENT=production',
       ]
 images:
-  - 'gcr.io/$PROJECT_ID/html-to-file-api:$COMMIT_SHA'
+  - 'gcr.io/${PROJECT_ID}/html-to-file-api:${COMMIT_SHA}'
