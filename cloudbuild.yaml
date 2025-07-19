@@ -4,7 +4,8 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/${PROJECT_ID}/html-to-file-api:${_TAG}']
   - name: 'gcr.io/cloud-builders/gcloud'
-    args: [
+    args:
+      [
         'run',
         'deploy',
         'html-to-file-api',
@@ -23,8 +24,8 @@ steps:
         '300s',
         '--set-env-vars',
         'JWT_SECRET_KEY=projects/${PROJECT_NUMBER}/secrets/JWT_SECRET_KEY:latest',
-        # '--update-secrets',
-        # 'JWT_SECRET_KEY=projects/${PROJECT_NUMBER}/secrets/JWT_SECRET_KEY:latest',
+        '--update-secrets',
+        'JWT_SECRET_KEY=projects/${PROJECT_NUMBER}/secrets/JWT_SECRET_KEY:latest',
         '--set-env-vars',
         'ENVIRONMENT=production',
       ]

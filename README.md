@@ -9,6 +9,10 @@ A fast, secure Go API for converting HTML to PNG or PDF files using headless Chr
 - Built with [Gin](https://github.com/gin-gonic/gin) and [chromedp](https://github.com/chromedp/chromedp)
 - Ready for Docker and Google Cloud Run
 
+## Live Demo
+
+[Demo URL](https://html-to-file-api-1015515485383.asia-southeast1.run.app)
+
 ## Requirements
 
 - Go 1.23+
@@ -135,6 +139,7 @@ To trigger a build and deploy (from the project root):
 
 ```bash
 gcloud builds submit --config cloudbuild.yaml
+# gcloud builds submit --config cloudbuild.yaml . --substitutions=_TAG="2025-07-19"
 ```
 
 The `cloudbuild.yaml` is configured to:
