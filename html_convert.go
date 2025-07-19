@@ -19,17 +19,26 @@ func convertHTMLToPNG(c *gin.Context) {
 		return
 	}
 
-	ctx, cancel := chromedp.NewContext(context.Background())
+	opts := append(chromedp.DefaultExecAllocatorOptions[:],
+		chromedp.Flag("headless", true),
+		chromedp.Flag("disable-gpu", true),
+		chromedp.Flag("no-sandbox", true),
+		chromedp.Flag("disable-dev-shm-usage", true),
+	)
+	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
 	defer cancel()
 
-	ctx, cancel = context.WithTimeout(ctx, 30*time.Second)
+	ctx, cancel := chromedp.NewContext(allocCtx)
+	defer cancel()
+
+	ctx, cancel = context.WithTimeout(ctx, 120*time.Second)
 	defer cancel()
 
 	var buf []byte
 	if err := chromedp.Run(ctx,
 		chromedp.Navigate("about:blank"),
-		chromedp.Evaluate(fmt.Sprintf(`document.documentElement.innerHTML = %q;`, req.HTML), nil),
-		chromedp.WaitVisible(`body`),
+		chromedp.Evaluate(fmt.Sprintf(`document.open();document.write(%q);document.close();`, req.HTML), nil),
+		chromedp.WaitReady("body"),
 		chromedp.FullScreenshot(&buf, 90),
 	); err != nil {
 		log.Printf("Error converting HTML to PNG: %v", err)
