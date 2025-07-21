@@ -4,8 +4,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,16 +27,6 @@ func main() {
 		auth.POST("/to-png", convertHTMLToPNG)
 		auth.POST("/to-pdf", convertHTMLToPDF)
 	}
-
-	// Graceful shutdown handler สำหรับปิด Chrome
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	go func() {
-		<-c
-		log.Println("Shutting down Chrome...")
-		shutdownChrome()
-		os.Exit(0)
-	}()
 
 	port := os.Getenv("PORT")
 	if port == "" {
