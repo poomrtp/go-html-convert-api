@@ -237,8 +237,6 @@ func checkChromeHealth() bool {
 		return healthCheckResult
 	}
 
-	healthStart := time.Now()
-
 	ctx, returnToPool := getChromeContextFromPool()
 	defer returnToPool()
 
@@ -331,15 +329,11 @@ func convertHTML(req ConversionRequest) {
 		return
 	}
 
-	var healthDuration time.Duration
 	if shouldPerformHealthCheck() {
-		healthStart := time.Now()
 		if !checkChromeHealth() {
 			reinitializeChrome()
 		}
-		healthDuration = time.Since(healthStart)
 	}
-	setupStart := time.Now()
 	ctx, returnToPool := getChromeContextFromPool()
 	defer returnToPool()
 
@@ -356,9 +350,7 @@ func convertHTML(req ConversionRequest) {
 			consecutiveErrors++
 		}
 	}()
-	setupDuration := time.Since(setupStart)
 
-	chromeStart := time.Now()
 
 	var data []byte
 	var mimeType string
@@ -369,8 +361,6 @@ func convertHTML(req ConversionRequest) {
 	} else {
 		data, mimeType, err = executeHTMLToPDF(ctx, req.HTML)
 	}
-
-	chromeDuration := time.Since(chromeStart)
 
 	if err != nil {
 		consecutiveErrors++
@@ -384,9 +374,7 @@ func convertHTML(req ConversionRequest) {
 
 	consecutiveErrors = 0
 	setCachedResult(req.HTML, req.Format, data, mimeType)
-	responseStart := time.Now()
 	req.Context.Data(http.StatusOK, mimeType, data)
-	responseDuration := time.Since(responseStart)
 
 	log.Printf("%s conversion completed: %v (%d bytes)",
 		strings.ToUpper(req.Format), time.Since(start), len(data))
@@ -425,14 +413,12 @@ func convertHTMLToPDF(c *gin.Context) {
 
 
 func pagePrintToPDF(ctx context.Context) ([]byte, error) {
-	start := time.Now()
 	var buf []byte
 	err := chromedp.Run(ctx, chromedp.ActionFunc(func(ctx context.Context) error {
 		var err error
 		buf, _, err = pagePrintToPDFInternal(ctx)
 		return err
 	}))
-
 	return buf, err
 }
 
